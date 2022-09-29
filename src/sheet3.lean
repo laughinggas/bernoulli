@@ -3,7 +3,7 @@ import number_theory.bernoulli_polynomials
 open finset polynomial
 open_locale big_operators
 
--- Today's aim: to prove this
+-- Today's aim:   to prove this
 -- Bernoulli polynomials multiplication theorem :
 --  For k ≥ 1, B_m(k*x) = k^{m - 1} ∑ i in range k, B_m (x + i / k).
 
