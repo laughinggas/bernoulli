@@ -59,14 +59,9 @@ begin
            polynomial.coeff_X_pow],
   simp_rw [smul_ite, sum_ite, smul_zero, sum_zero, add_zero, smul_sum, algebra.id.smul_eq_mul,
            mul_one],
-  split_ifs,
-  { subst h,
-     }
+  split_ifs; sorry
 end
 
-#print odd.add_even
-
-#exit
 
 @[simp] theorem sum_bernoulli_poly (n : ℕ) :
   ∑ k in range n, (n.choose k : ℚ) • bernoulli_poly k =
