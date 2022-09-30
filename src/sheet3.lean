@@ -24,25 +24,42 @@ theorem bernoulli_generating_function' (t : ℚ) :
   power_series.mk (λ n, polynomial.eval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) = power_series.X * rescale t (exp ℚ) :=
 bernoulli_generating_function t
 
-
 lemma function.smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) :
-  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := by admit
+  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := 
+begin
+  ext,
+  simp only [pi.smul_apply, smul_eq_mul],
+end
 
-lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f :=
-by admit
+lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f := 
+begin
+  ext,
+  simp only [coeff_mk, pi.smul_apply, power_series.coeff_smul],
+end
 
 lemma rescale_mk {R : Type*} [comm_semiring R] (f : ℕ → R) (a : R) :
-  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := by admit
+  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := 
+begin
+  ext,
+  simp only [coeff_rescale, coeff_mk],
+end
 
 lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
   power_series.mk (λ t, ∑ x in s, f x t) = ∑ x in s, power_series.mk (λ t, f x t) :=
-by admit
+begin
+  ext,
+  simp,
+end
+
+lemma rescale_one' {R : Type*} [comm_semiring R] (f : power_series R) :
+  rescale 1 f = f :=
+by simp
 
 lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f :=
-by admit
-
-lemma rescale_one' {R} [comm_semiring R] (f : power_series R) : rescale 1 f = f :=
-by simp
+begin
+  
+  sorry
+end
 
 theorem bernoulli_eval_mul (m : ℕ) {k : ℕ} (hk : k ≠ 0) (y : ℚ) : (polynomial.bernoulli m).eval ((k : ℚ) * y) = k^(m - 1 : ℤ) * ∑ i in finset.range k, (polynomial.bernoulli m).eval (y + i / k) :=
 begin
