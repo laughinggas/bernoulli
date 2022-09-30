@@ -21,31 +21,34 @@ end
 
 /-- The theorem that `∑ Bₙ(t)X^n/n!)(e^X-1)=Xe^{tX}`, using eval instead of aeval. -/
 theorem bernoulli_generating_function' (t : ℚ) :
-  power_series.mk (λ n, polynomial.aeval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) = power_series.X * rescale t (exp ℚ) :=
+  power_series.mk (λ n, polynomial.eval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) = power_series.X * rescale t (exp ℚ) :=
 bernoulli_generating_function t
 
 
 lemma function.smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) :
-  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := sorry
+  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := by admit
 
-lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f := sorry
+lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f :=
+by admit
 
 lemma rescale_mk {R : Type*} [comm_semiring R] (f : ℕ → R) (a : R) :
-  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := sorry
+  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := by admit
 
 lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
   power_series.mk (λ t, ∑ x in s, f x t) = ∑ x in s, power_series.mk (λ t, f x t) :=
-begin
-end
+by admit
 
 lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f :=
-sorry
+by admit
+
+lemma rescale_one' {R} [comm_semiring R] (f : power_series R) : rescale 1 f = f :=
+by simp
 
 theorem bernoulli_eval_mul (m : ℕ) {k : ℕ} (hk : k ≠ 0) (y : ℚ) : (polynomial.bernoulli m).eval ((k : ℚ) * y) = k^(m - 1 : ℤ) * ∑ i in finset.range k, (polynomial.bernoulli m).eval (y + i / k) :=
 begin
   suffices : power_series.mk (λ j, ((k : ℚ) ^ (j - 1 : ℤ) / j!) * ∑ i in range k, (polynomial.bernoulli m).eval (y + i / k)) * (exp ℚ - 1) * (rescale ↑k (exp ℚ) - 1) =
   power_series.mk (λ j, aeval (↑k * y) ((1 / j! : ℚ) • bernoulli j)) * (exp ℚ - 1) * (rescale ↑k (exp ℚ) - 1),
-  { replace := mul_right_cancel₀ _ (mul_right_cancel₀ _ this),
+  sorry{ replace := mul_right_cancel₀ _ (mul_right_cancel₀ _ this),
     have hm : (m! : ℚ) ≠ 0 := by exact_mod_cast m.factorial_ne_zero,
     replace := power_series.ext_iff.mp this m,
     simp only [coeff_mk, one_div, coe_aeval_eq_eval, eval_smul,
@@ -72,11 +75,11 @@ begin
     conv_rhs { congr, congr, congr, funext, rw [mul_comm _ (k ^ j : ℚ), mul_div_assoc, mul_assoc] },
     rw [←power_series.rescale_mk],
     simp_rw [mul_sum],
-    rw [power_series.sum_mk],
-    -- take `(rescale k) (exp ℚ - 1)` inside the sum in the RHS
-    
-    -- use `ring_hom.map_mul` to combine the `rescale k` inside the sum in the RHS into a single one (you will need `conv_rhs`)
-    
+    rw [power_series.sum_mk, bernoulli_generating_function, mul_comm (k : ℚ) y, rescale_mul,
+        ring_hom.comp_apply, mul_assoc, ←map_one (rescale (k : ℚ)), ←map_sub, ←map_mul, mul_sub], 
+    nth_rewrite 1 [←rescale_one' (exp ℚ)],
+    rw [exp_mul_exp_eq_exp_add, mul_one, map_sub],
+    sorry
     -- use `bernoulli_generating_function'` and `rescale_comp_eq_mul`
     
     --now use `hk` to cancel out `↑k`
