@@ -24,20 +24,24 @@ theorem bernoulli_generating_function' (t : ℚ) :
   power_series.mk (λ n, polynomial.aeval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) = power_series.X * rescale t (exp ℚ) :=
 bernoulli_generating_function t
 
-
 lemma function.smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) :
-  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := sorry
+  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := 
+begin
+  ext,
+  simp only [pi.smul_apply, smul_eq_mul],
+end
 
 lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f := 
 begin
   ext,
-  simp
+  simp only [coeff_mk, pi.smul_apply, power_series.coeff_smul],
 end
 
 lemma rescale_mk {R : Type*} [comm_semiring R] (f : ℕ → R) (a : R) :
   rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := 
 begin
-  
+  ext,
+  simp only [coeff_rescale, coeff_mk],
 end
 
 lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
