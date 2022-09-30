@@ -29,6 +29,8 @@ end
 
 -- You can also look up and prove some more properties, such as B_0(X) = 1 etc.
 
+
+-- ∑ (0 ≤ k ≤ n) (n+1) choose k * 𝔹ₖ = (n+1)xⁿ
 @[simp] theorem sum_bernoulli_poly (n : ℕ) :
   ∑ k in range (n + 1), ((n + 1).choose k : ℚ) • bernoulli_poly k =
     polynomial.monomial n (n + 1 : ℚ) :=
@@ -36,10 +38,9 @@ begin
 -- `simp_rw`: new tactic unlocked!
 -- the proof depends on your def, so no hints :( ask me for help!
 -- always remember to first have a clear pen and paper proof!
+-- based off `sum_bernoulli` in `number_theory.bernoulli_polynomials`
 
--- not my own proof, based off `sum_bernoulli` in `number_theory.bernoulli_polynomials`
-
-  -- ∑ (k = 0 to n) (n+1) choose k • BPₖ = (n + 1) xⁿ
+  -- ∑ (k = 0 to n) (n+1) choose k • 𝔹ₖ = (n + 1) xⁿ
   -- sub in definition of bernoulli polynomial `bernoulli_poly_def` to get
   --    ∑ (k = 0 to n) (n+1) choose k • (∑ (i = 0 to k) k choose i * B⁻(k-i) * xⁱ) = (n + 1) xⁿ
   -- take scalar multiplication in to inner sum
@@ -57,7 +58,7 @@ begin
   simp only [add_tsub_cancel_left, tsub_zero, zero_add, linear_map.map_add], -- deleted `cast_succ`
 
 
-  simp_rw [smul_monomial, mul_comm (_root_.bernoulli_neg _) _, smul_eq_mul, ←mul_assoc], -- what is the `_root_.` in `_root_.bernoulli_neg` for?
+  simp_rw [smul_monomial, mul_comm (_root_.bernoulli_neg _) _, smul_eq_mul, ←mul_assoc],
   conv_lhs { apply_congr, skip, conv
     { apply_congr, skip,
       rw [← nat.cast_mul, choose_mul ((le_tsub_iff_left $ mem_range_le H).1
