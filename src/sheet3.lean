@@ -28,14 +28,22 @@ bernoulli_generating_function t
 lemma function.smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) :
   (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := sorry
 
-lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f := sorry
+lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f := 
+begin
+  ext,
+  simp
+end
 
 lemma rescale_mk {R : Type*} [comm_semiring R] (f : ℕ → R) (a : R) :
-  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := sorry
+  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := 
+begin
+  
+end
 
 lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
   power_series.mk (λ t, ∑ x in s, f x t) = ∑ x in s, power_series.mk (λ t, f x t) :=
 begin
+  sorry
 end
 
 lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f :=
