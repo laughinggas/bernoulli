@@ -47,11 +47,15 @@ end
 lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
   power_series.mk (λ t, ∑ x in s, f x t) = ∑ x in s, power_series.mk (λ t, f x t) :=
 begin
-  sorry
+  ext,
+  simp,
 end
 
 lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f :=
-sorry
+begin
+  
+  sorry
+end
 
 theorem bernoulli_eval_mul (m : ℕ) {k : ℕ} (hk : k ≠ 0) (y : ℚ) : (polynomial.bernoulli m).eval ((k : ℚ) * y) = k^(m - 1 : ℤ) * ∑ i in finset.range k, (polynomial.bernoulli m).eval (y + i / k) :=
 begin
