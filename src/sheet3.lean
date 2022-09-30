@@ -3,9 +3,8 @@ import number_theory.bernoulli_polynomials
 open finset polynomial power_series
 open_locale big_operators nat
 
--- Today's aim:   to prove this
 -- Bernoulli polynomials multiplication theorem :
---  For k ≥ 1, B_m(k*x) = k^{m - 1} ∑ i in range k, B_m (x + i / k).
+-- For k ≥ 1, B_m(k*x) = k^{m - 1} ∑ i in range k, B_m (x + i / k).
 
 theorem exp_ne_constant {R} [ring R] [nontrivial R] [algebra ℚ R] (a : R) : exp R ≠ a • 1 :=
 λ h, by simpa using power_series.ext_iff.mp h 1
@@ -14,46 +13,32 @@ theorem rescale_ne_constant {R} [comm_semiring R] [no_zero_divisors R]
   (s : power_series R) {a : R} (ha : a ≠ 0) (b : R) (hc : ∀ a : R, s ≠ a • 1) :
   rescale a s ≠ b • 1 := λ h, hc b
 begin
-  ext (-|t),
+  ext (- | t),
   simpa using power_series.ext_iff.mp h 0,
   simpa [ha] using power_series.ext_iff.mp h t.succ
 end
 
-/-- The theorem that `∑ Bₙ(t)X^n/n!)(e^X-1)=Xe^{tX}`, using eval instead of aeval. -/
 theorem bernoulli_generating_function' (t : ℚ) :
-  power_series.mk (λ n, polynomial.eval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) = power_series.X * rescale t (exp ℚ) :=
-bernoulli_generating_function t
+  power_series.mk (λ n, polynomial.eval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) =
+  power_series.X * rescale t (exp ℚ) := bernoulli_generating_function t
 
 lemma function.smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) :
-  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := 
-begin
-  ext,
-  simp only [pi.smul_apply, smul_eq_mul],
-end
+  (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) :=
+  funext $ λ n, by simp only [pi.smul_apply, smul_eq_mul]
 
-lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f := 
-begin
-  ext,
-  simp only [coeff_mk, pi.smul_apply, power_series.coeff_smul],
-end
+lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk (a • f) = a • mk f :=
+  power_series.ext $ λ n, by simp only [coeff_mk, pi.smul_apply, power_series.coeff_smul]
 
 lemma rescale_mk {R : Type*} [comm_semiring R] (f : ℕ → R) (a : R) :
-  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := 
-begin
-  ext,
-  simp only [coeff_rescale, coeff_mk],
-end
+  rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) :=
+  power_series.ext $ λ n, by simp only [coeff_rescale, coeff_mk]
 
 lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
   power_series.mk (λ t, ∑ x in s, f x t) = ∑ x in s, power_series.mk (λ t, f x t) :=
-begin
-  ext,
-  simp,
-end
+  power_series.ext $ λ n, by simp only [coeff_mk, linear_map.map_sum]
 
-lemma rescale_one' {R : Type*} [comm_semiring R] (f : power_series R) :
-  rescale 1 f = f :=
-by simp
+lemma rescale_one' {R : Type*} [comm_semiring R] (f : power_series R) : rescale 1 f = f :=
+  by simp only [rescale_one, ring_hom.id_apply]
 
 theorem bernoulli_eval_mul (m : ℕ) {k : ℕ} (hk : k ≠ 0) (y : ℚ) : (polynomial.bernoulli m).eval ((k : ℚ) * y) = k^(m - 1 : ℤ) * ∑ i in finset.range k, (polynomial.bernoulli m).eval (y + i / k) :=
 begin
@@ -73,14 +58,13 @@ begin
       apply_instance,
       exact_mod_cast hk,
       exact exp_ne_constant } },
-  { symmetry, 
-    --use `bernoulli_generating_function` to change the LHS to `X * e^{k*x} * (e^{k*x} - 1)`
-
+  { symmetry,
+  -- use `bernoulli_generating_function` to change the LHS to `X * e^{k*x} * (e^{k*x} - 1)`
     have hk' : (k : ℚ) ≠ 0 := by exact_mod_cast hk,
+    -- change `k^{n - 1}` in the RHS to `1/k * k^n`
     have : ∀ n : ℕ, (k : ℚ)^(n - 1 : ℤ) = 1 / k * k^n,
     { intro n,
       rw [zpow_sub₀ hk', mul_comm, mul_div, zpow_one, div_left_inj' hk', mul_one, zpow_coe_nat] },
-    -- change `k^{n - 1}` in the RHS to `1/k * k^n` using `conv_rhs` or `simp_rw`
     simp_rw [this],
     -- use `function.smul` `rescale_mk` to get the power series in terms of `rescale k`
     conv_rhs { congr, congr, congr, funext, rw [mul_comm _ (k ^ j : ℚ), mul_div_assoc, mul_assoc] },
@@ -90,7 +74,8 @@ begin
         ring_hom.comp_apply, mul_assoc, ←map_one (rescale (k : ℚ)), ←map_sub, ←map_mul, mul_sub], 
     nth_rewrite 1 [←rescale_one' (exp ℚ)],
     rw [exp_mul_exp_eq_exp_add, mul_one, map_sub],
-    sorry
+    -- want to reduce LHS to X * (rescale k) (exp ℚ)      X * (e^{k(y+1)x} - e^{kyx}) = X * e^{kx}
+
     -- use `bernoulli_generating_function'` and `rescale_rescale`
     
     --now use `hk` to cancel out `↑k`
@@ -100,5 +85,6 @@ begin
     -- use `mul_sum` to extract the constants from the sum, and then apply the GP sum using `geom_sum_mul`
     
     -- almost got the same form, apply `congr_arg2` to deal with the individual cases
+    sorry
   }
 end
