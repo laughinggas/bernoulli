@@ -60,14 +60,24 @@ begin
       exact_mod_cast hk,
       exact exp_ne_constant } },
   { symmetry, 
-    --use `bernoulli_generating_function` to change the LHS to `X * e^{k*x} * (e^{k*x} - 1)`
+
+    --use `bernoulli_generating_function'` to change the LHS to `X * e^{k*x} * (e^{k*x} - 1)`
+    rw bernoulli_generating_function',
 
     have : ∀ n : ℕ, (k : ℚ)^(n - 1 : ℤ) = 1 / k * k^n,
-    { intro n, sorry, },
+    { intro n, 
+      
+      sorry, },
     -- change `k^{n - 1}` in the RHS to `1/k * k^n` using `conv_rhs` or `simp_rw`
+    simp_rw [this],
     
     -- use `function.smul` `rescale_mk` to get the power series in terms of `rescale k`
+    conv_rhs { congr, congr, congr, funext, rw [mul_comm _ (k ^ j : ℚ), mul_div_assoc, mul_assoc] },
+    rw [← power_series.rescale_mk],
     
+    sorry
+    --simp_rw [←rescale_mk],
+
     -- take `(rescale k) (exp ℚ - 1)` inside the sum in the RHS
     
     -- use `ring_hom.map_mul` to combine the `rescale k` inside the sum in the RHS into a single one (you will need `conv_rhs`)
@@ -82,13 +92,5 @@ begin
     
     -- almost got the same form, apply `congr_arg2` to deal with the individual cases
     
-    { -- this is a power series, use `power_series.ext`
-      apply power_series.ext (λ n, _), { apply_instance, },
-      -- use `coeff_rescale` and `power_series.coeff_X`
-      
-      -- break into cases n = 1 and n ≠ 1; use `if_pos` and `if_neg` to deal with `ite`
-      
-    { sorry, },
-    { -- use properties of `ring_hom` and `exp_pow_eq_rescale_exp`
-      sorry, }, },
+    }
 end

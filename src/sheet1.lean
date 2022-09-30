@@ -53,7 +53,6 @@ end
 @[simp] theorem sum_bernoulli_neg (n : ℕ) :
   ∑ k in range n, (n.choose k : ℚ) * bernoulli_neg k = if n = 1 then 1 else 0 :=
 begin
-  -- looked at `sum_bernoulli`
   cases n, { simp },
   cases n, { simp },
   suffices : ∑ i in range n, ↑((n + 2).choose (i + 2)) * bernoulli_neg (i + 2) = n / 2,
