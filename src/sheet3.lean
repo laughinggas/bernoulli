@@ -55,17 +55,11 @@ lemma rescale_one' {R : Type*} [comm_semiring R] (f : power_series R) :
   rescale 1 f = f :=
 by simp
 
-lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f :=
-begin
-  
-  sorry
-end
-
 theorem bernoulli_eval_mul (m : ℕ) {k : ℕ} (hk : k ≠ 0) (y : ℚ) : (polynomial.bernoulli m).eval ((k : ℚ) * y) = k^(m - 1 : ℤ) * ∑ i in finset.range k, (polynomial.bernoulli m).eval (y + i / k) :=
 begin
   suffices : power_series.mk (λ j, ((k : ℚ) ^ (j - 1 : ℤ) / j!) * ∑ i in range k, (polynomial.bernoulli m).eval (y + i / k)) * (exp ℚ - 1) * (rescale ↑k (exp ℚ) - 1) =
   power_series.mk (λ j, aeval (↑k * y) ((1 / j! : ℚ) • bernoulli j)) * (exp ℚ - 1) * (rescale ↑k (exp ℚ) - 1),
-  sorry{ replace := mul_right_cancel₀ _ (mul_right_cancel₀ _ this),
+  { replace := mul_right_cancel₀ _ (mul_right_cancel₀ _ this),
     have hm : (m! : ℚ) ≠ 0 := by exact_mod_cast m.factorial_ne_zero,
     replace := power_series.ext_iff.mp this m,
     simp only [coeff_mk, one_div, coe_aeval_eq_eval, eval_smul,
@@ -97,7 +91,7 @@ begin
     nth_rewrite 1 [←rescale_one' (exp ℚ)],
     rw [exp_mul_exp_eq_exp_add, mul_one, map_sub],
     sorry
-    -- use `bernoulli_generating_function'` and `rescale_comp_eq_mul`
+    -- use `bernoulli_generating_function'` and `rescale_rescale`
     
     --now use `hk` to cancel out `↑k`
      
