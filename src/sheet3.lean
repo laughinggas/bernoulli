@@ -3,14 +3,10 @@ import number_theory.bernoulli_polynomials
 open finset polynomial power_series
 open_locale big_operators nat
 
---local notation `𝔹` := polynomial.bernoulli
---local notation `psm` := power_series.mk
-
 -- Today's aim:   to prove this
 -- Bernoulli polynomials multiplication theorem :
 --  For k ≥ 1, B_m(k*x) = k^{m - 1} ∑ i in range k, B_m (x + i / k).
 
--- nontrivial R comes for free but I cba
 theorem exp_ne_constant {R} [ring R] [nontrivial R] [algebra ℚ R] (a : R) : exp R ≠ a • 1 :=
 λ h, by simpa using power_series.ext_iff.mp h 1
 
@@ -26,10 +22,8 @@ end
 /-- The theorem that `∑ Bₙ(t)X^n/n!)(e^X-1)=Xe^{tX}`, using eval instead of aeval. -/
 theorem bernoulli_generating_function' (t : ℚ) :
   power_series.mk (λ n, polynomial.aeval t ((1 / n! : ℚ) • polynomial.bernoulli n)) * (exp ℚ - 1) = power_series.X * rescale t (exp ℚ) :=
-begin
-  -- hint : how different is it from `bernoulli_generating_function`?
-  sorry,
-end
+bernoulli_generating_function t
+
 
 lemma function.smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) :
   (λ n : ℕ, a * (f n)) = a • (λ n : ℕ, f n) := sorry
@@ -39,7 +33,13 @@ lemma power_series.mk_smul {R : Type*} [semiring R] (f : ℕ → R) (a : R) : mk
 lemma rescale_mk {R : Type*} [comm_semiring R] (f : ℕ → R) (a : R) :
   rescale a (mk f) = mk (λ n : ℕ, a^n * (f n)) := sorry
 
-lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f := sorry
+lemma power_series.sum_mk {α β} [comm_semiring β] {s : finset α} (f : α → ℕ → β) :
+  power_series.mk (λ t, ∑ x in s, f x t) = ∑ x in s, power_series.mk (λ t, f x t) :=
+begin
+end
+
+lemma rescale_comp_eq_mul {R : Type*} [comm_semiring R] (f : power_series R) (a b : R) : rescale b (rescale a f) = rescale (a * b) f :=
+sorry
 
 theorem bernoulli_eval_mul (m : ℕ) {k : ℕ} (hk : k ≠ 0) (y : ℚ) : (polynomial.bernoulli m).eval ((k : ℚ) * y) = k^(m - 1 : ℤ) * ∑ i in finset.range k, (polynomial.bernoulli m).eval (y + i / k) :=
 begin
@@ -62,12 +62,17 @@ begin
   { symmetry, 
     --use `bernoulli_generating_function` to change the LHS to `X * e^{k*x} * (e^{k*x} - 1)`
 
+    have hk' : (k : ℚ) ≠ 0 := by exact_mod_cast hk,
     have : ∀ n : ℕ, (k : ℚ)^(n - 1 : ℤ) = 1 / k * k^n,
-    { intro n, sorry, },
+    { intro n,
+      rw [zpow_sub₀ hk', mul_comm, mul_div, zpow_one, div_left_inj' hk', mul_one, zpow_coe_nat] },
     -- change `k^{n - 1}` in the RHS to `1/k * k^n` using `conv_rhs` or `simp_rw`
-    
+    simp_rw [this],
     -- use `function.smul` `rescale_mk` to get the power series in terms of `rescale k`
-    
+    conv_rhs { congr, congr, congr, funext, rw [mul_comm _ (k ^ j : ℚ), mul_div_assoc, mul_assoc] },
+    rw [←power_series.rescale_mk],
+    simp_rw [mul_sum],
+    rw [power_series.sum_mk],
     -- take `(rescale k) (exp ℚ - 1)` inside the sum in the RHS
     
     -- use `ring_hom.map_mul` to combine the `rescale k` inside the sum in the RHS into a single one (you will need `conv_rhs`)
@@ -81,14 +86,5 @@ begin
     -- use `mul_sum` to extract the constants from the sum, and then apply the GP sum using `geom_sum_mul`
     
     -- almost got the same form, apply `congr_arg2` to deal with the individual cases
-    
-    { -- this is a power series, use `power_series.ext`
-      apply power_series.ext (λ n, _), { apply_instance, },
-      -- use `coeff_rescale` and `power_series.coeff_X`
-      
-      -- break into cases n = 1 and n ≠ 1; use `if_pos` and `if_neg` to deal with `ite`
-      
-    { sorry, },
-    { -- use properties of `ring_hom` and `exp_pow_eq_rescale_exp`
-      sorry, }, },
+  }
 end
