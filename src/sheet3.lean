@@ -74,9 +74,8 @@ begin
         ring_hom.comp_apply, mul_assoc, ←map_one (rescale (k : ℚ)), ←map_sub, ←map_mul, mul_sub], 
     nth_rewrite 1 [←rescale_one' (exp ℚ)],
     rw [exp_mul_exp_eq_exp_add, mul_one, map_sub],
-    -- want to reduce LHS to X * (rescale k) (exp ℚ)      X * (e^{k(y+1)x} - e^{kyx}) = X * e^{kx}
-
     -- use `bernoulli_generating_function'` and `rescale_rescale`
+    simp_rw [rescale_rescale], -- add_mul, one_mul
     
     --now use `hk` to cancel out `↑k`
      
